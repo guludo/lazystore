@@ -32,15 +32,21 @@ declare the entries and the second to create the respective instances.
 Creating the spec store
 -----------------------
 
-After importing ``lazystore``::
+After importing ``lazystore``:
+
+.. code:: python
 
     >>> import lazystore
 
-We create the spec store by calling the constructor like below::
+We create the spec store by calling the constructor like below:
+
+.. code:: python
 
     >>> specs = lazystore.SpecStore()
 
-With the spec store in place, we can begin declaring entries::
+With the spec store in place, we can begin declaring entries:
+
+.. code:: python
 
     >>> specs.Person('john', name='John Doe')
     Person('john')
@@ -61,7 +67,9 @@ On the lines above:
   to instantiate the entry).
 
 You can reference the entry by using the same syntax but using only the id
-argument. For example, we are referencing John's entry in the following::
+argument. For example, we are referencing John's entry in the following:
+
+.. code:: python
 
     >>> specs.Person('john')
     Person('john')
@@ -69,8 +77,9 @@ argument. For example, we are referencing John's entry in the following::
 Both calls (with full spec or only referencing) return the same type of object,
 a ``ValuePromise``. This type implements ``__getattr__``, ``__getitem__``, and
 ``__call__`` in such a way that you can use the promised value as if it was
-using the real object::
+using the real object:
 
+.. code:: python
 
     >>> dialog = [
     ...    specs.Person('john').say('Hello! My name is John.'),
@@ -79,7 +88,9 @@ using the real object::
     >>> dialog
     [Person('john').say('Hello! My name is John.'), Person('jane').say('Nice to meet you!')]
 
-Note that no instantiation has taken place yet::
+Note that no instantiation has taken place yet:
+
+.. code:: python
 
     >>> type(dialog[0])
     <class 'lazystore._lazystore.ValuePromise'>
@@ -93,12 +104,16 @@ is the resolver for the respective entry type. The resolver for an entry type
 must be a callable that accepts all positional and keyword arguments passed to
 the spec store when creating the spec.
 
-The first thing to do is to create a registry, which will hold the resolvers::
+The first thing to do is to create a registry, which will hold the resolvers:
+
+.. code:: python
 
     >>> registry = lazystore.Registry()
 
 Then we can define resolvers via ``registry.add_resolver`` or the decorator
-``registry.resolver``::
+``registry.resolver``:
+
+.. code:: python
 
     >>> @registry.resolver('Person')
     ... class Person:
@@ -130,11 +145,15 @@ be received from specs created for the entry type "Person".
 Creating the store and instantiating entries
 --------------------------------------------
 
-Now that we have both ``specs`` and ``registry``, we can create a store with::
+Now that we have both ``specs`` and ``registry``, we can create a store with:
+
+.. code:: python
 
     >>> store = lazystore.Store(registry, specs)
 
-Instantiation is done by "resolving" value promises::
+Instantiation is done by "resolving" value promises:
+
+.. code:: python
 
     >>> john = store.resolve(specs.Person('john'))
     ***Instantiating John Doe***
@@ -142,20 +161,26 @@ Instantiation is done by "resolving" value promises::
     'John Doe: Hi, there!'
 
 You can use the ``__getattr__`` shortcut as well. The following is equivalent
-to the code above::
+to the code above:
+
+.. code:: python
 
     >>> john = store.Person('john')
     >>> john.say('Hi, there!')
     'John Doe: Hi, there!'
 
 Note that entries are cached in the store. The same object is returned for the
-same combination of entry type and entry id::
+same combination of entry type and entry id:
+
+.. code:: python
 
     >>> store.Person('john') is john
     True
 
 The method ``resolve()`` can accept different forms of objects. In the
-following example, we use the ``dialog`` list created before::
+following example, we use the ``dialog`` list created before:
+
+.. code:: python
 
     >>> store.resolve(dialog)
     ***Instantiating Jane Doe***
@@ -165,7 +190,9 @@ following example, we use the ``dialog`` list created before::
 instantiated, so the cached value was returned).
 
 In fact, ``resolve()`` can recurse into lists, tuples and dictionaries. In the
-following example we create a dictionary representing a family::
+following example we create a dictionary representing a family:
+
+.. code:: python
 
     >>> family_spec = {
     ...     'father': specs.Person('john'),
@@ -177,12 +204,16 @@ following example we create a dictionary representing a family::
     ... }
 
 We purposefully used only the reference for Johnny to show that the order the
-specs are define does not matter. We define it now::
+specs are define does not matter. We define it now:
+
+.. code:: python
 
     >>> specs.Person('johnny', name='John Doe Junior')
     Person('johnny')
 
-With all specs ready, we can get the resolved value::
+With all specs ready, we can get the resolved value:
+
+.. code:: python
 
     >>> family = store.resolve(family_spec)
     ***Instantiating John Doe Junior***
